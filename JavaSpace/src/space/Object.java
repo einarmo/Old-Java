@@ -64,7 +64,7 @@ public class Object {
 				double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
 				double modx = xa/dist;
 				double mody = ya/dist;
-				V.setVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
+				V.addVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
 				SpaceRun.calc[num] = true;
 				OB[par-1].notfixed();
 			}
@@ -76,7 +76,7 @@ public class Object {
 				double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
 				double modx = xa/dist;
 				double mody = ya/dist;
-				V.setVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
+				V.addVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
 				SpaceRun.calc[num] = true;
 				OB[par-1].notfixed();
 
