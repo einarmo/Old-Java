@@ -10,6 +10,7 @@ public class RawFile {
 	String[] lines;
 	int[] lastP;
 	public Vector offset;
+
 	RawFile(File file) {
 		this.rawname = file.getName();
 		this.name = rawname.substring(3);

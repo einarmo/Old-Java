@@ -4,7 +4,7 @@ public class Object {
 	
 	private double G;
 	public int par, num;
-	public Vector P, V;
+	public Vector P, V, A;
 	public double mass;
 	public Color c;
 	public boolean fix, remove;
@@ -17,33 +17,28 @@ public class Object {
 		this.V = V;
 		this.mass = mass;
 		this.c = c;
+		this.A = new Vector(0.0, 0.0);
 		this.G = Space.G;
 		this.fix = true;
 		this.remove = false;
 	}
 	
 	public void calc(Object[] OB) {
-		Vector A = new Vector(0.0,0.0);
-		for (int i = 0; i < OB.length; i++) {
-			if (i != num) {
-				double[] dA = OB[i].returnVal();
-				double radius = Math.sqrt(Math.pow(dA[0]-P.x,2)+(Math.pow(dA[1]-P.y,2)));
-				
-				double accelraw = ((G*dA[4])/(radius*radius));
-				double moddif = accelraw/radius;
-				A.addVal((dA[0]-P.x)*moddif, (dA[1]-P.y)*moddif);
-				//System.out.println(moddif);
-			}
+		for (int i = num+1; i < OB.length; i++) {
+			Vector dist = Vector.add(OB[i].P, Vector.mult(-1, P));
+			Vector force = Vector.mult(OB[i].mass*mass*G*1/(dist.size()*dist.size()), Vector.mult(1/dist.size(), dist));
+			OB[i].A.add(Vector.mult(-1/OB[i].mass, force), 1);
+			A.add(Vector.mult(1/mass, force), 1);
 		}
-		V.add(A);
-
 	}
 	public double[] returnVal() {
 		double[] dA = {P.x,P.y, V.x, V.y, mass};
 		return dA;
 	}
 	public void trav() {
-		P.add(V);
+		V.add(A, Space.calcmod);
+		P.add(V, Space.calcmod);
+		A = new Vector(0.0, 0.0);
 	}
 	public void notfixed() {
 		fix = false;
