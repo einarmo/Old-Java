@@ -14,6 +14,9 @@ public class Vector {
 		this.x = nX;
 		this.y = nY;
 	}
+	public static Vector dist(Vector a, Vector b) {
+		return new Vector(a.x-b.x, a.y-b.y);
+	}
 	public static Vector add(Vector a, Vector b) {
 		return new Vector(a.x+b.x, a.y+b.y);
 	}

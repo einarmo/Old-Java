@@ -7,6 +7,7 @@ public class SpaceRun {
 	public static boolean zoom, zoomOut, left, right, up, down, changed, clear, incSpeed, decSpeed = false;
 	public static int selItem = 0;
 	static double rel, scrX, scrY;
+	public static boolean sizeC = false;
 	public static boolean[] calc;
 	private int numticks;
 	Object[] OB;
@@ -41,6 +42,14 @@ public class SpaceRun {
 		m.createF();
 		//setIdealZoom();
 		this.inf = new InfoPanel(350,he,wi+5,0, OB);
+		if(sizeC) {
+			doSimW();
+		} else {
+			doSimO();
+		}
+		
+	}
+	public void doSimW() {
 		for(int i = 0; i<numticks; i++) {
 			for(int k = 0; k < OB.length; k++) {
 				OB[k].calc(OB);
@@ -49,15 +58,54 @@ public class SpaceRun {
 				OB[k].trav();
 			}
 			if(i%Space.update == 0) {
-				drawObj(i);
+				drawObjW(i);
 			}
 			if(i%50000 == 0) {
 				calcMinDist();
 			}
 		}
+	}
+	public void doSimO() {
+		for(int i = 0; i<numticks; i++) {
+			for(int k = 0; k < OB.length; k++) {
+				OB[k].calc(OB);
+			}
+			for(int k = 0; k < OB.length; k++) {
+				OB[k].trav();
+			}
+			if(i%Space.update == 0) {
+				drawObjO(i);
+			}
+			if(i%50000 == 0) {
+				calcMinDist();
+			}
+		}
+	}
+	public void drawObjW(int i) {
+		m.createGraphics();
+		perfChange();
+		focus();
+		if(i%10 == 0) {
+			if(changed) {
+				m.clear();
+				changed = false;
+			}
+		}
+		if(i%2000 == 0) {
+			inf.setInfoString(OB);
+		}
+		for(int j = 0; j < OB.length; j++) {
+			int rad = (int)Math.ceil(OB[j].size/rel);
+			if(rad<2) {
+				m.plot(convX(OB[j].P.x), convY(OB[j].P.y), OB[j].c);
+			} else {
+				m.drawCircle(convX(OB[j].P.x), convY(OB[j].P.y), rad, OB[j].c);
+			}
+		}
+		m.flush();
 		
 	}
-	public void drawObj(int i) {
+	public void drawObjO(int i) {
 		m.createGraphics();
 		perfChange();
 		focus();
@@ -74,7 +122,6 @@ public class SpaceRun {
 			m.plot(convX(OB[j].P.x), convY(OB[j].P.y), OB[j].c);
 		}
 		m.flush();
-		
 	}
 	public void perfChange() {
 		if(zoom) {

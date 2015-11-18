@@ -5,17 +5,19 @@ public class Object {
 	private double G;
 	public int par, num;
 	public Vector P, V, A;
-	public double mass;
+	public double mass, ec, size;
 	public Color c;
 	public boolean fix, remove;
 	
 	
-	Object(int num, Vector P, Vector V, double mass, Color c, int par) {
+	Object(int num, Vector P, Vector V, double mass, Color c, int par, double ec) {
 		this.num = num;
 		this.P = P;
 		this.par = par;
 		this.V = V;
 		this.mass = mass;
+		this.size = 1.12*mass;
+		this.ec = ec;
 		this.c = c;
 		this.A = new Vector(0.0, 0.0);
 		this.G = Space.G;
@@ -26,7 +28,8 @@ public class Object {
 	public void calc(Object[] OB) {
 		for (int i = num+1; i < OB.length; i++) {
 			Vector dist = Vector.add(OB[i].P, Vector.mult(-1, P));
-			Vector force = Vector.mult(OB[i].mass*mass*G*1/(dist.size()*dist.size()), Vector.mult(1/dist.size(), dist));
+			double size = dist.size();
+			Vector force = Vector.mult(OB[i].mass*mass*G*1/(size*size), Vector.mult(1/size, dist));
 			OB[i].A.add(Vector.mult(-1/OB[i].mass, force), 1);
 			A.add(Vector.mult(1/mass, force), 1);
 		}
@@ -52,30 +55,23 @@ public class Object {
 	}
 	public void calcOrbit(Object OB[]) {
 		if(par != 0 && !SpaceRun.calc[num])  {
-			if(SpaceRun.calc[par-1]) {
-				double[] dA = OB[par-1].returnVal();
-				double xa = dA[0]-P.x;
-				double ya = dA[1]-P.y;
-				double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
-				double modx = xa/dist;
-				double mody = ya/dist;
-				V.addVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
-				SpaceRun.calc[num] = true;
-				OB[par-1].notfixed();
-			}
-			else {
+			if(!SpaceRun.calc[par-1]){
 				OB[par-1].calcOrbit(OB);
-				double[] dA = OB[par-1].returnVal();
-				double xa = dA[0]-P.x;
-				double ya = dA[1]-P.y;
-				double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
-				double modx = xa/dist;
-				double mody = ya/dist;
-				V.addVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
-				SpaceRun.calc[num] = true;
-				OB[par-1].notfixed();
-
 			}
+			double u = Space.G*(OB[par-1].mass+mass);
+			Vector dist = Vector.dist(OB[par-1].P, P);
+			double a = dist.size()/(1-this.ec);
+			Vector unit = Vector.mult(1/dist.size(), dist);
+			Vector rotU = new Vector(-unit.y, unit.x);
+			V.add(Vector.add(Vector.mult(Math.sqrt((1+this.ec)*u/((1-this.ec)*a)), rotU), OB[par-1].V), 1);
+			
+			//V.addVal(dA[2] + Math.sqrt((G*(mass+dA[4]))/dist)*-mody, dA[3] + Math.sqrt((G*(mass+dA[4]))/dist)*modx);
+			
+			
+			
+			
+			SpaceRun.calc[num] = true;
+			OB[par-1].notfixed();
 		}
 		else {
 			SpaceRun.calc[num] = true;
@@ -86,28 +82,18 @@ public class Object {
 			if ((OB[i].par-1==num)&&!fix) {
 				if (!OB[i].fix) {
 					OB[i].calcChildren(OB);
-					double[] dA = OB[i].returnVal();
-					double xa = dA[0]-P.x;
-					double ya = dA[1]-P.y;
-					double relspdx = dA[2]-V.x;
-					double relspdy = dA[3]-V.y;
-					double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
-					double modx = xa/dist;
-					double mody = ya/dist;
-					V.addVal((dA[4]*relspdx)/mass*-mody,(dA[4]*relspdy)/mass*modx);
-					OB[i].modspd((dA[4]*relspdx)/mass*-mody,(dA[4]*relspdy)/mass*modx);				
+					Vector moment = new Vector((OB[i].V.x-V.x)*OB[i].mass, (OB[i].V.y-V.y)*OB[i].mass);
+					
+					V.add(Vector.mult(-1/(2*mass), moment), 1);
+					OB[i].V.add(Vector.mult(-1/(2*mass), moment), 1);
+					
 				}
 				else {
-					double[] dA = OB[i].returnVal();
-					double xa = dA[0]-P.x;
-					double ya = dA[1]-P.y;
-					double relspdx = dA[2]-V.x;
-					double relspdy = dA[3]-V.y;
-					double dist = Math.sqrt(Math.pow(xa,2)+Math.pow(ya,2));
-					double modx = xa/dist;
-					double mody = ya/dist;
-					V.addVal((dA[4]*relspdx)/mass*-mody,(dA[4]*relspdy)/mass*modx);
-					OB[i].modspd((dA[4]*relspdx)/mass*-mody,(dA[4]*relspdy)/mass*modx);
+					Vector moment = new Vector((OB[i].V.x-V.x)*OB[i].mass, (OB[i].V.y-V.y)*OB[i].mass);
+					
+					V.add(Vector.mult(-1/(2*mass), moment),1);
+					OB[i].V.add(Vector.mult(-1/(2*mass), moment), 1);
+					//OB[i].calcChildren(OB);
 				}
 			}
 		}

@@ -76,7 +76,7 @@ public class Space {
 			file.println("true boolean calcorb : Calculate circular orbits.");
 			file.println("1 integer update : number of ticks between each graphical update. Should be increased if calcmod is lowered.");
 			file.println("100000000 integer numticks : number of ticks to be calculated.");
-			file.println("6.67384 double G : the universal gravitational constant G in this program.");
+			file.println("0.667384 double G : the universal gravitational constant G in this program.");
 			file.println("./objects/ String objPath : the path to the object files.");
 			file.close();
 		}

@@ -4,6 +4,6 @@ public class JavaGame {
 		new JavaGame();
 	}
 	JavaGame() {
-		MainGraphics g = new MainGraphics();
+		new MainGraphics();
 	}
 }

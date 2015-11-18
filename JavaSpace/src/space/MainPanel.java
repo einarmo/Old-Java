@@ -62,7 +62,7 @@ public class MainPanel {
 	}
 	public void drawCircle(int x, int y, int r, Color c) { //Currently unused
 		g.setColor(c);
-		g.fillOval(x, y, r/2, r/2);
+		g.fillOval(x-r/2, y-r/2, r, r);
 	}
 	public void createGraphics() {
 		g = this.CImage.createGraphics();

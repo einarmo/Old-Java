@@ -44,7 +44,11 @@ public class RawFile {
 	}
 	public String[] returnInfo(int num) {
 		String[] info = lines[num].split(" ");
-		return info;
+		String[] infoF = new String[11];
+		for(int i = 0; i<info.length; i++) {
+			infoF[i] = info[i];
+		}
+		return infoF;
 	}
 	public void writeToFile() {
 		PrintWriter file = null;
@@ -149,7 +153,7 @@ public class RawFile {
 			tmpInt[i] = lastP[i];
 		}
 		tmpInt[lastP.length] = (-1);
-		tmpLines[lines.length] = ("0 0 0 0 1 0 0 0 0 1");
+		tmpLines[lines.length] = ("0 0 0 0 1 0 0 0 0 1 0");
 		lastP = new int[tmpInt.length];
 		lines = new String[tmpLines.length];
 		for (int i = 0; i<tmpLines.length; i++) {
@@ -187,7 +191,7 @@ public class RawFile {
 				Vector pos = new Vector(num[0], num[1]);
 				pos.addVal(offset.x, offset.y);
 				Color c = new Color(num[5].intValue(), num[6].intValue(), num[7].intValue());
-				OB[v] = new Object(v, pos, new Vector(num[2], num[3]), num[4], c, num[8].intValue());
+				OB[v] = new Object(v, pos, new Vector(num[2], num[3]), num[4], c, num[8].intValue(), num[10]);
 				v++;
 			}
 		}

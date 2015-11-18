@@ -2,13 +2,11 @@ package space;
 import javax.swing.*;
 
 import java.awt.*;
-
 import javax.swing.border.*;
 
 import java.io.*;
 import java.util.Scanner;
 
-import javax.swing.SwingUtilities;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import java.awt.event.*;
@@ -25,6 +23,7 @@ public class EditPanel {
 	JFrame frame;
 	Space s;
 	JTextField nameField;
+	JRadioButton calcB;
 	public static Object[] objects;
 
 	EditPanel(int width, int height, Space s) {
@@ -94,8 +93,10 @@ public class EditPanel {
 		b5.setToolTipText("Change launch profile, or make a new one");
 		b5.setActionCommand("elaunch");
 		b5.addActionListener(new buttonControl());
+		
+		calcB = new JRadioButton("Draw size");
 
-		String[] labelstrings = {"x-pos", "y-pos", "x-vel", "y-vel", "mass", "red", "green", "blue", "parent"};
+		String[] labelstrings = {"x-pos", "y-pos", "x-vel", "y-vel", "mass", "red", "green", "blue", "parent", "eccentricity"};
 		fields = new JTextField[labelstrings.length];
 		JLabel[] label = new JLabel[labelstrings.length];
 		c.gridwidth = 1;
@@ -132,7 +133,9 @@ public class EditPanel {
 		c.fill = GridBagConstraints.BOTH;
 		c.gridwidth = 2;
 		c.gridy = 3;
-
+		
+		c.gridx = 0;
+		pane.add(calcB, c);
 		c.gridx = 1;
 		pane.add(b3, c);
 
@@ -174,7 +177,7 @@ public class EditPanel {
 			} catch (InterruptedException e) {
 			}
 		}
-
+		SpaceRun.sizeC = calcB.isSelected();
 		frame.dispose();
 		s.launch(objects);
 	}
@@ -190,6 +193,11 @@ public class EditPanel {
 		finstr = (finstr + ", colourRed: " + info[5]);
 		finstr = (finstr + ", colourGreen: " + info[6]);
 		finstr = (finstr + ", colourBlue: " + info[7]);
+		try {
+		finstr = (finstr + ", ecentricity: " + info[10]);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			finstr = (finstr +", ecentricity: ");
+		}
 		if(info[8].equals("0")) {
 			finstr = (finstr + ", parent: none");
 		}
@@ -363,7 +371,11 @@ public class EditPanel {
 						for(int k = 0; k<fields.length; k++) {
 							String[] info = rawfiles[fileselection].returnInfo(objselection);
 							if(k>5) {
-								fields[k].setText(info[k]);
+								if(k!=9) {
+									fields[k].setText(info[k]);
+								} else {
+									fields[k].setText(info[k+1]);
+								}
 							} else if ((info[k].equals("0") && k<5)){
 								fields[k].setText("0.0");
 							} else {
@@ -462,6 +474,13 @@ public class EditPanel {
 			else if (command.equals("newentry")) {
 				rawfiles[fileselection].addEntry();
 				objselection = rawfiles[fileselection].getLength()-1;
+				for(int i = 0; i<fields.length; i++) {
+					if(i!=9) {
+					rawfiles[fileselection].editEntry(objselection, i, fields[i].getText());
+					} else {
+						rawfiles[fileselection].editEntry(objselection, i+1, fields[i].getText());
+					}
+				}
 				setObjDisplay();
 				objlist.setSelectedIndex(objselection);
 			}
@@ -475,7 +494,11 @@ public class EditPanel {
 					for(int w = 0; w<fields.length; w++) {
 						if (source.equals(fields[w].getDocument())&& objselection != -1) {
 							saved = false;
-							rawfiles[fileselection].editEntry(objselection, w, fields[w].getText());
+							if(w == 9) {
+								rawfiles[fileselection].editEntry(objselection, w+1, fields[w].getText());
+							} else {
+								rawfiles[fileselection].editEntry(objselection, w, fields[w].getText());
+							}
 						}
 					}
 					updateObjDisplay();
@@ -489,7 +512,11 @@ public class EditPanel {
 					for(int w = 0; w<fields.length; w++) {
 						if (source.equals(fields[w].getDocument())&& objselection != -1) {
 							saved = false;
-							rawfiles[fileselection].editEntry(objselection, w, fields[w].getText());
+							if(w == 9) {
+								rawfiles[fileselection].editEntry(objselection, w+1, fields[w].getText());
+							} else {
+								rawfiles[fileselection].editEntry(objselection, w, fields[w].getText());
+							}
 						}
 					}
 					updateObjDisplay();
@@ -524,6 +551,12 @@ public class EditPanel {
 						if(isInt(string)) {
 							if((Integer.valueOf(sb.toString()) < (rawfiles[fileselection].getLength()+1)) 
 									&& (Integer.valueOf(sb.toString())> -1)) {
+								super.insertString(fb, offset, string, attr);
+							}
+						}
+					} else if(i==9) {
+						if(isDouble(string)) {
+							if(Double.valueOf(sb.toString()) < 1 && Double.valueOf(sb.toString())>=0) {
 								super.insertString(fb, offset, string, attr);
 							}
 						}
@@ -572,6 +605,12 @@ public class EditPanel {
 								super.replace(fb, offset, length, string, attr);
 							}
 						}
+					}else if(i==9) {
+						if(isDouble(sb.toString())) {
+							if(Double.valueOf(sb.toString()) < 1 && Double.valueOf(sb.toString())>=0) {
+								super.replace(fb, offset, length, string, attr);
+							}
+						}
 					}
 				}
 			}
@@ -597,6 +636,12 @@ public class EditPanel {
 					} else if(i == 8) {
 						if (isInt(sb.toString())) {
 							if(Integer.parseInt(sb.toString()) > -1 && Integer.parseInt(sb.toString()) < rawfiles[fileselection].getLength()) {
+								super.remove(fb, offset, length);
+							}
+						}
+					}else if(i==9) {
+						if(isDouble(sb.toString())) {
+							if(Double.valueOf(sb.toString()) < 1 && Double.valueOf(sb.toString())>=0) {
 								super.remove(fb, offset, length);
 							}
 						}
