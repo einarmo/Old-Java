@@ -51,7 +51,7 @@ public class SpaceRun {
 	}
 	public void doSimW() {
 		for(int i = 0; i<numticks; i++) {
-			for(int k = 0; k < OB.length; k++) {
+			for(int k = 0; k < OB.length; k++) {		
 				OB[k].calc(OB);
 			}
 			for(int k = 0; k < OB.length; k++) {
