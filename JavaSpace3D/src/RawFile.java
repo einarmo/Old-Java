@@ -44,7 +44,7 @@ public class RawFile {
 	}
 	public String[] returnInfo(int num) {
 		String[] info = lines[num].split(" ");
-		String[] infoF = new String[13];
+		String[] infoF = new String[12];
 		for(int i = 0; i<info.length; i++) {
 			infoF[i] = info[i];
 		}
@@ -153,7 +153,7 @@ public class RawFile {
 			tmpInt[i] = lastP[i];
 		}
 		tmpInt[lastP.length] = (-1);
-		tmpLines[lines.length] = ("0 0 0 0 0 0 1 0 0 0 0 1 0");
+		tmpLines[lines.length] = ("0 0 0 0 0 0 1 0 0 0 0 1");
 		lastP = new int[tmpInt.length];
 		lines = new String[tmpLines.length];
 		for (int i = 0; i<tmpLines.length; i++) {
@@ -191,7 +191,7 @@ public class RawFile {
 				Vector3D pos = new Vector3D(num[0], num[1], num[2]);
 				//pos.addVal(offset.x, offset.y);
 				Color c = new Color(num[7].intValue(), num[8].intValue(), num[9].intValue());
-				OB[v] = new Object(v, pos, new Vector3D(num[3], num[4], num[5]), num[6], c, num[10].intValue(), num[12]);
+				OB[v] = new Object(v, pos, new Vector3D(num[3], num[4], num[5]), num[6], c, num[10].intValue());
 				v++;
 			}
 		}

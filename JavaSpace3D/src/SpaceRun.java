@@ -15,10 +15,11 @@ public class SpaceRun {
 	//Vector3D angle = new Vector3D(Math.PI/2, 0.0, 0.0); 
 	public static Vector3D angle = new Vector3D(0.0, 0.0, 0.0); //Pitch, yaw, roll
 	//Vector3D cPos = new Vector3D(0, 1000, 0);
-	public static Vector3D cPos = new Vector3D(1000, 0, 1000);
+	public static Vector3D cPos = new Vector3D(0, 0, 1000);
 	public static Vector3D focusPos = new Vector3D(0, 0, 0);
 	Vector3D uPos;
 	Vector3D relC = new Vector3D(0.0, 0.0, 1000);
+	public double zoomR = 1000;
 	private int numticks;
 	public static Object[] OB;
 	MainPanel m;
@@ -76,17 +77,18 @@ public class SpaceRun {
 	}
 	public void drawObj(int i) {
 		m.createGraphics();
-		focus();
+		updateCamera();
 		if(i%100 == 0) {
 			if(changed) {
 				m.clear();
+				
 				changed = false;
 				
 			}
 		}
 		if(achanged) {
 			if(fMode) {
-				//updateCamera();
+				
 			}
 			updateConstants();
 		}
@@ -114,9 +116,10 @@ public class SpaceRun {
 		
 	}
 	public void updateCamera() {
-		cPos.z = relC.z*Math.cos(angle.x+Math.PI)*Math.cos(angle.y+Math.PI) + focusPos.x;
-		cPos.y = relC.z*Math.sin(angle.x+Math.PI) + focusPos.y;
-		cPos.x = relC.z*Math.cos(angle.x+Math.PI)*Math.sin(angle.y+Math.PI) + focusPos.z;
+		double size = Math.sqrt(1+Math.sin(angle.x)*Math.sin(angle.x));
+		cPos.z = zoomR*Math.cos(-angle.x)*Math.cos(angle.y)/size + focusPos.z;
+		cPos.y = zoomR*Math.sin(-angle.x)/size + focusPos.y;
+		cPos.x = zoomR*Math.cos(-angle.x)*Math.sin(angle.y)/size + focusPos.x;
 	}
 	public void updateConstants() {
 		currentSin.x = Math.sin(angle.x);
@@ -222,11 +225,11 @@ public class SpaceRun {
 			}
 			if(zoom) {
 				changed = true;
-				relC.z -= 1.0/Space.update;
+				zoomR -= 1.0/Space.update;
 			}
 			if(zoomOut) {
 				changed = true;
-				relC.z += 1.0/Space.update;
+				zoomR += 1.0/Space.update;
 			}
 			if(yRight) {
 				achanged = true;
@@ -263,8 +266,7 @@ public class SpaceRun {
 	}
 	public void focus() {
 		if(fMode) {
-			//this.cPos = Vector3D.add(relC, focusPos);
-			lookAt(focusPos);
+			//lookAt(focusPos);
 		}
 	}
 	public Vector3D conv(Vector3D point, Vector3D d) {
@@ -328,11 +330,7 @@ public class SpaceRun {
 	public void lookAt(Vector3D p) {
 		Vector3D dist = Vector3D.dist(p, cPos);
 		angle.x = Math.atan2(dist.y,Math.sqrt(dist.z*dist.z+dist.x*dist.x));
-		if (dist.z >= 0) {
-		    angle.y = -Math.atan2(dist.x, -dist.z);
-		} else {
-		    angle.y = -Math.atan2(dist.x, -dist.z);
-		}
+		angle.y = -Math.atan2(dist.x, -dist.z);
 		//angle.z = -Math.atan2( Math.cos(angle.x), Math.sin(angle.x) * Math.sin(angle.y) );
 		achanged = true;
 		//System.out.println(dist.z);

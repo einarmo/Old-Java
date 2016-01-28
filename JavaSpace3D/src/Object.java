@@ -10,7 +10,7 @@ public class Object {
 	public boolean fix, remove;
 	
 	
-	Object(int num, Vector3D P, Vector3D V, double mass, Color c, int par, double ec) {
+	Object(int num, Vector3D P, Vector3D V, double mass, Color c, int par) {
 		this.num = num;
 		this.P = P;
 		this.par = par;

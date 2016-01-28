@@ -93,6 +93,7 @@ public class InfoPanel {
 		finTxt = (finTxt + SpaceRun.cPos.x + "<br>");
 		finTxt = (finTxt + SpaceRun.cPos.y + "<br>");
 		finTxt = (finTxt + SpaceRun.cPos.z + "<br>");
+		finTxt = (finTxt + Space.calcmod + "<br>");
 		finTxt = ("<html>" + finTxt + "</html>");
 		tLab.setText(finTxt);
 	}

@@ -18,7 +18,7 @@ public class EditPanel {
 	RawFile[] rawfiles;
 	int objselection, fileselection;
 	JTextField[] fields;
-	JButton b1,b2,b3,b4,b5;
+	JButton b1,b2,b3,b4,b5,b6;
 	boolean saved;
 	JFrame frame;
 	Space s;
@@ -54,7 +54,7 @@ public class EditPanel {
 		c.weightx = 1.0;
 		c.fill = GridBagConstraints.BOTH;
 		c.anchor = GridBagConstraints.PAGE_START;
-		c.gridwidth = 11;
+		c.gridwidth = 12;
 		pane.add(mainScroll, c);
 
 		listF = new DefaultListModel<String>();
@@ -69,7 +69,7 @@ public class EditPanel {
 		JScrollPane fileScroll = new JScrollPane(filelist);
 		fileScroll.setBorder(new EmptyBorder(0,0,0,0));
 		fileScroll.setPreferredSize(new Dimension(200, height/2));
-		c.gridx = 11;
+		c.gridx = 12;
 		c.gridwidth = 2;
 		pane.add(fileScroll, c);
 
@@ -93,10 +93,13 @@ public class EditPanel {
 		b5.setToolTipText("Change launch profile, or make a new one");
 		b5.setActionCommand("elaunch");
 		b5.addActionListener(new buttonControl());
-		
+		b6 = new JButton("Create from parameters");
+		b6.setToolTipText("Create new object from orbital parameters, opens a seperate menu");
+		b6.setActionCommand("nParam");
+		b6.addActionListener(new buttonControl());
 		calcB = new JRadioButton("Draw size");
 
-		String[] labelstrings = {"x-pos", "y-pos", "z-pos", "x-vel", "y-vel", "z-vel", "mass", "red", "green", "blue", "parent", "eccentricity"};
+		String[] labelstrings = {"x-pos", "y-pos", "z-pos", "x-vel", "y-vel", "z-vel", "mass", "red", "green", "blue", "parent"};
 		fields = new JTextField[labelstrings.length];
 		JLabel[] label = new JLabel[labelstrings.length];
 		c.gridwidth = 1;
@@ -156,9 +159,11 @@ public class EditPanel {
 		pane.add(b5, c);
 
 		c.gridy = 2;
-		c.gridx = 10;
+		c.gridx = 12;
 		pane.add(nameField, c);
-
+		
+		c.gridy = 3;
+		pane.add(b6, c);
 		JLabel nameLabel = new JLabel("Filename");
 		c.gridy = 1;
 		pane.add(nameLabel, c);
