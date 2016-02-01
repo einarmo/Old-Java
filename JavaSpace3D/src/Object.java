@@ -4,7 +4,7 @@ public class Object {
 	
 	private double G;
 	public int par, num;
-	public Vector3D P, V, A;
+	public Vector3D P, V, A, RelSpd;
 	public double mass, size;
 	public Color c;
 	public boolean fix, remove;

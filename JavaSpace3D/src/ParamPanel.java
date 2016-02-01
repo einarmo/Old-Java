@@ -66,11 +66,29 @@ public class ParamPanel {
 		}
 		int parentNum = Integer.valueOf(infoList[6]);
 		String[] pInfo = file.returnInfo(parentNum);
-		Vector3D pPos = new Vector3D(Double.valueOf(pInfo[0]),Double.valueOf(pInfo[1]),Double.valueOf(pInfo[2]));
-		Vector3D pVel = new Vector3D(Double.valueOf(pInfo[3]),Double.valueOf(pInfo[4]),Double.valueOf(pInfo[5]));
 		Vector3D pANNORM = new Vector3D(Math.sin(Double.valueOf(pInfo[3])), 0, Math.cos(Double.valueOf(pInfo[3])));
-		
-
+		Vector3D pC = new Vector3D(Math.cos(Double.valueOf(infoList[2]))/(Math.sqrt(1.0+
+				Math.tan(Double.valueOf(infoList[3]))*Math.tan(Double.valueOf(infoList[3])))), 
+				Math.sin(Double.valueOf(infoList[2])), Math.tan(Double.valueOf(infoList[3]))*
+				Math.cos(Double.valueOf(infoList[2]))/(Math.sqrt(1.0+
+				Math.tan(Double.valueOf(infoList[3]))*Math.tan(Double.valueOf(infoList[3])))));
+		double argPer = Double.valueOf(infoList[4]);
+		double vTrue = Double.valueOf(infoList[4])+Double.valueOf(infoList[5]);
+		Vector3D posNORM = Vector3D.add(Vector3D.add(Vector3D.mult(Math.cos(vTrue), pANNORM), 
+				Vector3D.mult(Math.sin(vTrue), Vector3D.cross(Vector3D.cross(pC, pANNORM), pANNORM))), 
+				Vector3D.mult((1-Math.cos(vTrue))*Vector3D.product(Vector3D.cross(pC, pANNORM), pANNORM), 
+				Vector3D.cross(pC, pANNORM)));
+		Vector3D perNORM = Vector3D.add(Vector3D.add(Vector3D.mult(Math.cos(argPer), pANNORM), 
+				Vector3D.mult(Math.sin(argPer), Vector3D.cross(Vector3D.cross(pC, pANNORM), pANNORM))), 
+				Vector3D.mult((1-Math.cos(argPer))*Vector3D.product(Vector3D.cross(pC, pANNORM), pANNORM), 
+				Vector3D.cross(pC, pANNORM)));
+		Vector3D minNORM = Vector3D.cross(perNORM, Vector3D.cross(pC, pANNORM));
+		double sMa = Double.valueOf(infoList[1]);
+		double sma = sMa*Math.sqrt(1.0-Double.valueOf(infoList[0])*Double.valueOf(infoList[0]));
+		Vector3D trueRelPos = Vector3D.add(Vector3D.mult(sMa*Math.cos(Double.valueOf(infoList[5])), perNORM),
+				Vector3D.mult(sma*Math.sin(Double.valueOf(infoList[5])), minNORM));
+		Vector3D centPos = Vector3D.mult(sMa*-Double.valueOf(infoList[0]), perNORM);
+		Vector3D fakeRelPos = Vector3D.add(trueRelPos, centPos);
 	}
 	
 	

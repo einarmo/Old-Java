@@ -645,7 +645,8 @@ public class EditPanel {
 						}
 					} else if(i == 10) {
 						if (isInt(sb.toString())) {
-							if(Integer.parseInt(sb.toString()) > -1 && Integer.parseInt(sb.toString()) < rawfiles[fileselection].getLength()) {
+							if(Integer.parseInt(sb.toString()) > -1 && Integer.parseInt(sb.toString()) < 
+									rawfiles[fileselection].getLength()) {
 								super.remove(fb, offset, length);
 							}
 						}

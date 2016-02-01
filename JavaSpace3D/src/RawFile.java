@@ -9,6 +9,7 @@ public class RawFile {
 	File file;
 	String[] lines;
 	int[] lastP;
+	Vector3D relVel = null;
 	//public Vector offset;
 
 	RawFile(File file) {
@@ -192,6 +193,9 @@ public class RawFile {
 				//pos.addVal(offset.x, offset.y);
 				Color c = new Color(num[7].intValue(), num[8].intValue(), num[9].intValue());
 				OB[v] = new Object(v, pos, new Vector3D(num[3], num[4], num[5]), num[6], c, num[10].intValue());
+				if(relVel!=null) {
+					OB[v].RelSpd = relVel;
+				}
 				v++;
 			}
 		}
