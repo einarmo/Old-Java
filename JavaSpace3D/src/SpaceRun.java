@@ -32,14 +32,6 @@ public class SpaceRun {
 		this.numticks = ticks;
 		
 		calc = new boolean[OB.length];
-		if(Space.calcorb){
-			for(int h = 0; h<OB.length; h++) {
-				OB[h].calcOrbit(OB);
-			}
-			for(int h = 0; h<OB.length; h++) {
-				OB[h].calcChildren(OB);
-			}
-		}
 		getMaxMass();
 		maxDist = maxMass*10000;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -96,15 +88,11 @@ public class SpaceRun {
 			inf.setInfoString(OB);
 		}
 		for(int j = 0; j < OB.length; j++) {
-			//int rad = (int)Math.ceil(OB[j].size/rel);
 			int rad = 1;
 			Vector3D d = Vector3D.dist(OB[j].P, cPos);
 			Vector3D conv = conv(OB[j].P, d);
 			int x = convX(conv);
 			int y = convY(conv);
-			//System.out.println(x + " " + y);
-			//System.out.println(conv.x + " " + conv.y + " " + conv.z);
-			//if(x > 0 && x<500 && y> 0 && y<500)
 			if(conv.z<0&&x>0&&y>0&&x<m.drawW&&y<m.drawH) {
 				m.plot(x, y, rad, OB[j].c);
 			}

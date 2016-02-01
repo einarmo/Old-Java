@@ -420,7 +420,7 @@ public class EditPanel {
 			}
 		}
 	}
-	public class buttonControl implements ActionListener {
+	 class buttonControl implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if ((command.equals("toggle"))&&objselection != -1&&fileselection != rawfiles.length) {
@@ -490,6 +490,9 @@ public class EditPanel {
 				}
 				setObjDisplay();
 				objlist.setSelectedIndex(objselection);
+			}
+			else if (command.equals("nParam")) {
+				new ParamPanel(rawfiles[fileselection].getLength(), rawfiles[fileselection]);
 			}
 		}
 	}
