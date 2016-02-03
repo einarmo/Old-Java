@@ -5,6 +5,11 @@ public class Vector3D {
 		this.y = y;
 		this.z = z;
 	}
+	Vector3D(Vector3D a, Vector3D b) {
+		this.x = b.x-a.x;
+		this.y = b.y-a.y;
+		this.z = b.z-a.z;
+	}
 	public void addVal(double nX, double nY, double nZ) {
 		this.x = x + nX;
 		this.y = y + nY;

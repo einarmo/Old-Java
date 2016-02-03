@@ -27,7 +27,7 @@ public class SpaceRun {
 	private double maxMass, maxDist;
 	Vector3D currentSin = new Vector3D(0, 0, 0); //Current sine value of the camera, to save processing power
 	Vector3D currentCos = new Vector3D(0, 0, 0); 
-	SpaceRun(int ticks, Object[] OB) {
+	SpaceRun(int ticks, Object[] OB) { //Initiate the main process
 		SpaceRun.OB = OB;
 		this.numticks = ticks;
 		
@@ -46,11 +46,12 @@ public class SpaceRun {
 		this.inf = new InfoPanel(350,he,wi+5,0, OB);
 		uPos = new Vector3D(-(wi+200)/2, -(he+200)/2, 500);
 		updateConstants();
-		doSim();
-	}
-	public void doSim() {
 		TimerThread timer = new TimerThread();
 		new Thread(timer).start();
+		doSim();
+	}
+	public void doSim() { //Perform calculation tick
+
 		for(int i = 0; i<numticks; i++) {
 			for(int k = 0; k < OB.length; k++) {
 				OB[k].calc(OB);
@@ -67,23 +68,10 @@ public class SpaceRun {
 			}
 		}
 	}
-	public void drawObj(int i) {
-		m.createGraphics();
-		updateCamera();
-		if(i%100 == 0) {
-			if(changed) {
-				m.clear();
-				
-				changed = false;
-				
-			}
-		}
-		if(achanged) {
-			if(fMode) {
-				
-			}
-			updateConstants();
-		}
+	public void drawObj(int i) { //Perform draw tick
+
+		
+
 		if(i%2000*Space.update == 0) {
 			inf.setInfoString(OB);
 		}
@@ -100,16 +88,26 @@ public class SpaceRun {
 		if(doDraw) {
 			m.flush();
 			change = false;
+			updateCamera();
+			m.createGraphics();
+			if(achanged) {
+				updateConstants();
+
+			}
+			if(changed) {
+				m.clear();
+				changed = false;
+			}
 		}
 		
 	}
-	public void updateCamera() {
+	public void updateCamera() { //Update camera position to match the current angle of the camera and the focus
 		double size = Math.sqrt(1+Math.sin(angle.x)*Math.sin(angle.x));
 		cPos.z = zoomR*Math.cos(-angle.x)*Math.cos(angle.y)/size + focusPos.z;
 		cPos.y = zoomR*Math.sin(-angle.x)/size + focusPos.y;
 		cPos.x = zoomR*Math.cos(-angle.x)*Math.sin(angle.y)/size + focusPos.x;
 	}
-	public void updateConstants() {
+	public void updateConstants() { //Update the sine and cosine constants
 		currentSin.x = Math.sin(angle.x);
 		currentSin.y = Math.sin(angle.y);
 		currentSin.z = Math.sin(angle.z);
@@ -117,7 +115,7 @@ public class SpaceRun {
 		currentCos.y = Math.cos(angle.y);
 		currentCos.z = Math.cos(angle.z);
 	}
-	public void perfChange() {
+	public void perfChange() { //Perform changes to constants based on keypresses
 		if(decSpeed) {
 			Space.calcmod -= Space.calcmod*0.00001/Space.update;
 		}
@@ -289,7 +287,7 @@ public class SpaceRun {
 		}
 		SpaceRun.OB = tmpOB.clone();
 	}
-	public void calcMinDist() {
+	public void calcMinDist() { //Calculates the deletion distance
 		for(int i = 0; i<OB.length; i++) {
 			double mindist = Double.POSITIVE_INFINITY;
 			for (int j = 0; j<OB.length; j++) {
@@ -315,7 +313,7 @@ public class SpaceRun {
 			}
 		}
 	}
-	public void lookAt(Vector3D p) {
+	public void lookAt(Vector3D p) { //Changes the camera to look at the specified object
 		Vector3D dist = Vector3D.dist(p, cPos);
 		angle.x = Math.atan2(dist.y,Math.sqrt(dist.z*dist.z+dist.x*dist.x));
 		angle.y = -Math.atan2(dist.x, -dist.z);
@@ -323,7 +321,7 @@ public class SpaceRun {
 		achanged = true;
 		//System.out.println(dist.z);
 	}
-	public void getMaxMass() {
+	public void getMaxMass() { //Returns the highest mass.
 		maxMass = 0;
 		for(int i = 0; i<OB.length; i++) {
 			if(maxMass<OB[i].mass) {

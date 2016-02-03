@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
+//Simple dialogue class, with buttons for yes/no
 public class Dialog implements ActionListener {
 	
 	JButton b1, b2;

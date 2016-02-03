@@ -162,6 +162,9 @@ public class RawFile {
 			lastP[i] = tmpInt[i];
 		}
 	}
+	public void setEntry(int entry, String s) {
+		lines[entry] = s;
+	}
 	public int getLP(int index) {
 		return lastP[index];
 	}

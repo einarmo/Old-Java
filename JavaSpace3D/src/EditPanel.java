@@ -25,10 +25,13 @@ public class EditPanel {
 	JTextField nameField;
 	JRadioButton calcB;
 	public static Object[] objects;
-
+	EditPanel t;
+	
+	//Primary class used for editing objects as well as adding new objects to setup.
 	EditPanel(int width, int height, Space s) {
 		saved = true;
-
+		t = this;
+		//Creates the various lists and panels necessary for the display of objects and files.
 		genRawFiles(Space.objPath);
 		setObjDisplay();
 		this.objselection = -1;
@@ -73,6 +76,7 @@ public class EditPanel {
 		c.gridwidth = 2;
 		pane.add(fileScroll, c);
 
+		//Initiates and sets up all the buttons
 		b1 = new JButton("Toggle on");
 		b1.setToolTipText("Toggle selected object on or off");
 		b1.setActionCommand("toggle");
@@ -99,6 +103,7 @@ public class EditPanel {
 		b6.addActionListener(new buttonControl());
 		calcB = new JRadioButton("Draw size");
 
+		//Creates the text fields and associated labels and adds them to the GUI.
 		String[] labelstrings = {"x-pos", "y-pos", "z-pos", "x-vel", "y-vel", "z-vel", "mass", "red", "green", "blue", "parent"};
 		fields = new JTextField[labelstrings.length];
 		JLabel[] label = new JLabel[labelstrings.length];
@@ -122,7 +127,7 @@ public class EditPanel {
 			c.gridy = 1;
 			pane.add(label[i], c);
 		}
-
+		
 		for(int k = 0; k<fields.length; k++) {
 			if(k<5) {
 				fields[k].setText("0.0");
@@ -130,7 +135,8 @@ public class EditPanel {
 				fields[k].setText("0");
 			}
 		}
-
+		
+		//Adds all the buttons as well as the field for adding names.
 		nameField = new JTextField(4);
 		c.weighty = 0.0;
 		c.fill = GridBagConstraints.BOTH;
@@ -168,13 +174,14 @@ public class EditPanel {
 		c.gridy = 1;
 		pane.add(nameLabel, c);
 
+		//Initiates the main frame
 		frame = new JFrame("Edit");
 		frame.add(pane);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		//frame.setResizable(false);
 		frame.setVisible(true);
 
+		//Waits for a call to end before closing the frame and launching the main program.
 		synchronized(frame) {
 			try {
 				frame.wait();
@@ -186,7 +193,7 @@ public class EditPanel {
 		frame.dispose();
 		s.launch(objects);
 	}
-	public String createString(int num,int dispnum, RawFile file) {
+	public String createString(int num,int dispnum, RawFile file) { //Creates the filelist display string from rawfile info
 		String finstr = "";
 		String[] info = file.returnInfo(num);
 		finstr = (finstr + "Object_" + (dispnum+1));
@@ -217,7 +224,7 @@ public class EditPanel {
 		return finstr;
 	}
 
-	public void setFileDisplay() {
+	public void setFileDisplay() { //Resets the filedisplay and adds all files
 		listF.clear();
 
 		for (int i = 0; i<rawfiles.length; i++) {
@@ -225,8 +232,8 @@ public class EditPanel {
 		}
 		listF.addElement("New entry...");
 	}
-	public void handleRemove(int removed) {
-		RawFile tempfile = rawfiles[fileselection];
+	public void handleRemove(int removed) { //Handles removal of objects
+		RawFile tempfile = rawfiles[fileselection]; 
 		int pos = getActualPosition(removed)-1;
 		for (int i = 0; i<tempfile.getLength(); i++) {
 			String[] info = tempfile.returnInfo(i);
@@ -237,9 +244,12 @@ public class EditPanel {
 			else if (Integer.valueOf(info[8]) > pos+1) {
 				tempfile.editEntry(i, 10, Integer.toString(Integer.valueOf(info[10])-1));
 			}
+			if(Integer.valueOf(info[10])<-1) {
+				tempfile.editEntry(i, 10, Integer.toString(-1));
+			}
 		}
 	}
-	public void handleEnable(int enabled) {
+	public void handleEnable(int enabled) { //Handles reenabling of objects
 		int pos = getActualPosition(enabled);
 		RawFile tempfile = rawfiles[fileselection];
 		for (int i = 0; i<tempfile.getLength(); i++) {
@@ -251,9 +261,13 @@ public class EditPanel {
 			else if (Integer.valueOf(info[10]) >= pos) {
 				tempfile.editEntry(i, 10, Integer.toString(Integer.valueOf(info[8])+1));
 			}
+			if(Integer.valueOf(info[10])<-1) {
+				tempfile.editEntry(i, 10, Integer.toString(-1));
+			}
 		}
+		
 	}
-	public int getActualPosition(int entry) {
+	public int getActualPosition(int entry) { //Gets real position while taking disabled objects into account
 		int v = 0;
 		for (int i = 0; i<entry; i++) {
 			if (rawfiles[fileselection].isenabled(i)) {
@@ -263,7 +277,7 @@ public class EditPanel {
 		v++;
 		return v;
 	}
-	public void addFile(String name) {
+	public void addFile(String name) { //Adds a new file
 		RawFile[] tmpFile = new RawFile[rawfiles.length+1];
 		for(int i = 0; i<rawfiles.length; i++) {
 			tmpFile[i] = rawfiles[i];
@@ -281,7 +295,7 @@ public class EditPanel {
 			}
 		}
 	}
-	public void genRawFiles(String path) {
+	public void genRawFiles(String path) { //Generates rawfile classes from file
 		File f = new File(path);
 		File[] files = f.listFiles();
 		int k = 0;
@@ -299,7 +313,7 @@ public class EditPanel {
 		}
 	}
 
-	public void setObjDisplay() {
+	public void setObjDisplay() { //Sets up the object display list
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -317,7 +331,7 @@ public class EditPanel {
 			}
 		});
 	}
-	public static String[] loadSetup() {
+	public static String[] loadSetup() { //Loads relevant filenames
 		Scanner inFile = null;
 		try {
 			inFile = new Scanner(new File("last"));
@@ -338,7 +352,7 @@ public class EditPanel {
 		inFile.close();
 		return ret;
 	}
-	public void updateObjDisplay() {
+	public void updateObjDisplay() { //Updates the object display from rawfiles
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -354,7 +368,7 @@ public class EditPanel {
 			}
 		});
 	}
-	public class selobjlist implements ListSelectionListener {
+	public class selobjlist implements ListSelectionListener { //Object selection listener
 		public void valueChanged(ListSelectionEvent e) {
 			if (!(e.getValueIsAdjusting())) {
 				if(fileselection != rawfiles.length) {
@@ -394,7 +408,7 @@ public class EditPanel {
 			}
 		}
 	}
-	public class selfilelist implements ListSelectionListener {
+	public class selfilelist implements ListSelectionListener { //File selection listener
 		public void valueChanged(ListSelectionEvent e) {
 			if (!(e.getValueIsAdjusting())) {
 				if(filelist.getSelectedIndex() == -1 || filelist.getSelectedIndex() == rawfiles.length+1) {
@@ -420,7 +434,7 @@ public class EditPanel {
 			}
 		}
 	}
-	 class buttonControl implements ActionListener {
+	 class buttonControl implements ActionListener { //button listener
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if ((command.equals("toggle"))&&objselection != -1&&fileselection != rawfiles.length) {
@@ -492,11 +506,11 @@ public class EditPanel {
 				objlist.setSelectedIndex(objselection);
 			}
 			else if (command.equals("nParam")) {
-				new ParamPanel(rawfiles[fileselection].getLength(), rawfiles[fileselection]);
+				new ParamPanel(rawfiles[fileselection].getLength(), rawfiles[fileselection], t);
 			}
 		}
 	}
-	public class fieldList implements DocumentListener {
+	public class fieldList implements DocumentListener { //Document listener for actively modifying the object list
 		public void insertUpdate(DocumentEvent e) {
 			Document source = e.getDocument();
 			if(rawfiles.length != fileselection) {
@@ -536,7 +550,7 @@ public class EditPanel {
 		public void changedUpdate(DocumentEvent e) {
 		}
 	}
-	class DocFilter extends DocumentFilter {
+	class DocFilter extends DocumentFilter { //Filters the textfields
 		@Override
 		public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
 			Document doc = fb.getDocument();
@@ -591,7 +605,8 @@ public class EditPanel {
 			}
 		}
 		@Override
-		public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attr) throws BadLocationException {
+		public void replace(FilterBypass fb, int offset, int length, String string, AttributeSet attr) 
+				throws BadLocationException {
 			Document doc = fb.getDocument();
 			StringBuilder sb = new StringBuilder();
 			sb.append(doc.getText(0, doc.getLength()));
