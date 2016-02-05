@@ -60,8 +60,10 @@ public class ParamPanel {
 		b3.addActionListener(new radioListener());
 		b1 = new JButton("Add");
 		b1.setActionCommand("add");
+		b1.addActionListener(new ButtonControl());
 		b2 = new JButton("Finish");
 		b2.setActionCommand("finish");
+		b2.addActionListener(new ButtonControl());
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridy = 3;
@@ -87,23 +89,21 @@ public class ParamPanel {
 		double arP = Double.valueOf(infoList[4])/360.0*2*Math.PI;
 		double mass = 0.003*Double.valueOf(infoList[6]);
 		double trueAN = Double.valueOf(infoList[5])/360.0*2*Math.PI;
+		
 		int parentNum = Integer.valueOf(infoList[7]);
 		String[] pInfo = file.returnInfo(parentNum);
-		Vector3D pANNORM = new Vector3D(Math.sin(Double.valueOf(pInfo[3])), 0, Math.cos(Double.valueOf(pInfo[3])));
+		Vector3D pANNORM = new Vector3D(Math.sin(LongAN), 0, Math.cos(LongAN));
 		Vector3D pC = new Vector3D(Math.cos(Double.valueOf(inc))/(Math.sqrt(1.0+
 				Math.tan(Double.valueOf(LongAN))*Math.tan(Double.valueOf(LongAN)))), 
 				Math.sin(Double.valueOf(inc)), Math.tan(Double.valueOf(LongAN))*
 				Math.cos(Double.valueOf(inc))/(Math.sqrt(1.0+
 				Math.tan(Double.valueOf(LongAN))*Math.tan(Double.valueOf(LongAN)))));
-		double vTrue = Double.valueOf(infoList[4])/360.0*Math.PI*2+Double.valueOf(infoList[5])/360.0*Math.PI*2;
-		Vector3D posNORM = Vector3D.add(Vector3D.add(Vector3D.mult(Math.cos(vTrue), pANNORM), 
-				Vector3D.mult(Math.sin(vTrue), Vector3D.cross(Vector3D.cross(pC, pANNORM), pANNORM))), 
-				Vector3D.mult((1-Math.cos(vTrue))*Vector3D.product(Vector3D.cross(pC, pANNORM), pANNORM), 
-				Vector3D.cross(pC, pANNORM)));
+		double vTrue = arP/360.0*Math.PI*2+trueAN/360.0*Math.PI*2;
+		Vector3D k = Vector3D.cross(pC, pANNORM);
 		Vector3D perNORM = Vector3D.add(Vector3D.add(Vector3D.mult(Math.cos(arP), pANNORM), 
-				Vector3D.mult(Math.sin(arP), Vector3D.cross(Vector3D.cross(pC, pANNORM), pANNORM))), 
-				Vector3D.mult((1-Math.cos(arP))*Vector3D.product(Vector3D.cross(pC, pANNORM), pANNORM), 
-				Vector3D.cross(pC, pANNORM)));
+				Vector3D.mult(Math.sin(arP), Vector3D.cross(k, pANNORM))), 
+				Vector3D.mult((1-Math.cos(arP))*Vector3D.product(k, pANNORM), 
+				k));
 		Vector3D minNORM = Vector3D.cross(perNORM, Vector3D.cross(pC, pANNORM));
 		double sMa;
 		if(b3.isSelected()) {
@@ -111,31 +111,48 @@ public class ParamPanel {
 		} else {
 			sMa = Double.valueOf(infoList[1])*1000/(1.496*Math.pow(10, 11));
 		}
-		double sma = sMa*Math.sqrt(1.0-Double.valueOf(infoList[0])*Double.valueOf(infoList[0]));
+		double smia = sMa*Math.sqrt(1.0-Double.valueOf(infoList[0])*Double.valueOf(infoList[0]));
 		Vector3D trueRelPos = Vector3D.add(Vector3D.mult(sMa*Math.cos(Double.valueOf(trueAN)), perNORM),
-				Vector3D.mult(sma*Math.sin(Double.valueOf(trueAN)), minNORM));
-		//Vector3D centPos = Vector3D.mult(sMa*-Double.valueOf(infoList[0]), perNORM);
-		//Vector3D fakeRelPos = new Vector3D(centPos, trueRelPos);
+				Vector3D.mult(smia*Math.sin(Double.valueOf(trueAN)), minNORM));
+		Vector3D centPos = Vector3D.mult(-sMa*Double.valueOf(infoList[0]), perNORM);
+		Vector3D fakeRelPos = Vector3D.add(centPos, trueRelPos);
 		Vector3D velNORM = Vector3D.add(Vector3D.mult(-1.0*sMa*Math.sin(Double.valueOf(trueAN)), perNORM),
-				Vector3D.mult(sma*Math.cos(Double.valueOf(infoList[5])), minNORM)).normalize();
-		double oEnergy = -1.0*Space.G*(Double.valueOf(pInfo[6])+mass)/(2*sMa);
-		double spd = Math.sqrt(2*(oEnergy+Space.G*(Double.valueOf(pInfo[6])+mass)/trueRelPos.size()));
+				Vector3D.mult(smia*Math.cos(Double.valueOf(trueAN)), minNORM)).normalize();
+		double spd = Math.sqrt(Space.G*(Double.valueOf(pInfo[6])+mass)*(2/(fakeRelPos.size())-1/sMa));
+		System.out.println(spd);
+		System.out.println(sMa);
+		System.out.println(smia);
+		System.out.println(fakeRelPos.x + " " + fakeRelPos.y + " " + fakeRelPos.z);
+		System.out.println(perNORM.x + " " + perNORM.y + " " + perNORM.z);
+		System.out.println(trueAN + " " + Math.cos(trueAN));
+		System.out.println(trueRelPos.x + " " + trueRelPos.y + " " + trueRelPos.z);
+		System.out.println(centPos.x + " " + centPos.y + " " + centPos.z);
+		System.out.println(pC.x + " " + pC.y + " " + pC.z);
+		System.out.println(k.x + " " + k.y + " " + k.z);
 		Vector3D vel =  Vector3D.mult(spd, velNORM);
 		Color c = Color.decode(infoList[8]);
 		file.addEntry();
-		file.setEntry(numEntry, Double.toString(trueRelPos.x) + " "
-				+ Double.toString(trueRelPos.y) + " "
-				+ Double.toString(trueRelPos.z) + " "
-				+ Double.toString(vel.x) + " "
-				+ Double.toString(vel.y) + " "
-				+ Double.toString(vel.z) + " "
+		file.setEntry(numEntry, Double.toString(fakeRelPos.x+Double.valueOf(pInfo[0])) + " "
+				+ Double.toString(fakeRelPos.y+Double.valueOf(pInfo[1])) + " "
+				+ Double.toString(fakeRelPos.z+Double.valueOf(pInfo[2])) + " "
+				+ Double.toString(vel.x+Double.valueOf(pInfo[3])) + " "
+				+ Double.toString(vel.y+Double.valueOf(pInfo[4])) + " "
+				+ Double.toString(vel.z+Double.valueOf(pInfo[5])) + " "
 				+ Double.toString(mass) + " "
 				+ Integer.toString(c.getRed()) + " "
 				+ Integer.toString(c.getGreen()) + " "
 				+ Integer.toString(c.getBlue()) + " "
 				+ Integer.toString(parentNum+1) + " "
 				+ "1");
+		p.saved = false;
+		Vector3D pdV = Vector3D.mult(-mass/Double.valueOf(pInfo[6]), vel);
+		file.editEntry(parentNum, 3, Double.toString(pdV.x+Double.valueOf(pInfo[3])));
+		file.editEntry(parentNum, 4, Double.toString(pdV.y+Double.valueOf(pInfo[4])));
+		file.editEntry(parentNum, 5, Double.toString(pdV.z+Double.valueOf(pInfo[5])));
+		file.recalcChildren(parentNum, pdV);
+		file.children.get(parentNum).add(numEntry);
 		p.setObjDisplay();
+		numEntry++;
 	}
 	
 	

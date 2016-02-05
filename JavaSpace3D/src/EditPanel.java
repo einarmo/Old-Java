@@ -207,11 +207,6 @@ public class EditPanel {
 		finstr = (finstr + ", colourRed: " + info[7]);
 		finstr = (finstr + ", colourGreen: " + info[8]);
 		finstr = (finstr + ", colourBlue: " + info[9]);
-		try {
-		finstr = (finstr + ", ecentricity: " + info[12]);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			finstr = (finstr +", ecentricity: ");
-		}
 		if(info[10].equals("0")) {
 			finstr = (finstr + ", parent: none");
 		}
@@ -503,6 +498,7 @@ public class EditPanel {
 					}
 				}
 				setObjDisplay();
+				saved = false;
 				objlist.setSelectedIndex(objselection);
 			}
 			else if (command.equals("nParam")) {

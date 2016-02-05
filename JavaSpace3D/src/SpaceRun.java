@@ -13,7 +13,7 @@ public class SpaceRun {
 	public static boolean[] calc;
 	public static boolean change, doDraw;
 	//Vector3D angle = new Vector3D(Math.PI/2, 0.0, 0.0); 
-	public static Vector3D angle = new Vector3D(0.0, 0.0, 0.0); //Pitch, yaw, roll
+	public static Vector3D angle = new Vector3D(1.0/2*Math.PI, 0.0, 0.0); //Pitch, yaw, roll
 	//Vector3D cPos = new Vector3D(0, 1000, 0);
 	public static Vector3D cPos = new Vector3D(0, 0, 1000);
 	public static Vector3D focusPos = new Vector3D(0, 0, 0);

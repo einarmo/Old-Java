@@ -10,12 +10,14 @@ public class RawFile {
 	String[] lines;
 	int[] lastP;
 	Vector3D relVel = null;
+	ArrayList<ArrayList<Integer>> children;
 	//public Vector offset;
 
 	RawFile(File file) {
 		this.rawname = file.getName();
 		this.name = rawname.substring(3);
 		this.file = file;
+		this.children = new ArrayList<ArrayList<Integer>>();
 		//this.offset = new Vector(0,0);
 		
 		readInfo();
@@ -38,6 +40,7 @@ public class RawFile {
 		}
 		lines = new String[i];
 		for (int v = 0; v<i; v++) {
+			children.add(new ArrayList<Integer>());
 			lines[v] = templines[v];
 			lines[v] = lines[v].replaceAll("\n", "");
 		}
@@ -133,6 +136,13 @@ public class RawFile {
 		lastP[index] = newVal;
 	}
 	public void removePerm(int entry) {
+		String[] info = returnInfo(entry);
+		int parNum = Integer.valueOf(info[10]);
+		for(int i = 0; i<children.get(parNum).size(); i++) {
+			if(children.get(parNum).get(i)==entry) {
+				children.get(parNum).remove(i);
+			}
+		}
 		String[] tmpLines = new String[lines.length-1];
 		int v = 0;
 		for(int i = 0; i<lines.length; i++) {
@@ -164,6 +174,14 @@ public class RawFile {
 	}
 	public void setEntry(int entry, String s) {
 		lines[entry] = s;
+	}
+	public void recalcChildren(int entry, Vector3D dV) {
+		for(int i = 0; i<children.get(entry).size(); i++) {
+			String[] infoF = returnInfo(children.get(entry).get(i));
+			editEntry((int)children.get(entry).get(i), 3, Double.toString(Double.valueOf(infoF[3])+dV.x));
+			editEntry((int)children.get(entry).get(i), 4, Double.toString(Double.valueOf(infoF[4])+dV.y));
+			editEntry((int)children.get(entry).get(i), 5, Double.toString(Double.valueOf(infoF[5])+dV.z));
+		}
 	}
 	public int getLP(int index) {
 		return lastP[index];
