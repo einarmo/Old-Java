@@ -54,6 +54,9 @@ public class ParamPanel {
 			c.gridy = 1;
 			mainP.add(textLabels[i], c);
 		}
+		fields[1].setText("1.0");
+		fields[6].setText("1.0");
+		fields[7].setText("0");
 		fields[textLabels.length-1].setText("#ffffff");
 		b3 = new JRadioButton("AU");
 		b3.setSelected(true);

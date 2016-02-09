@@ -230,14 +230,23 @@ public class EditPanel {
 	public void handleRemove(int removed) { //Handles removal of objects
 		RawFile tempfile = rawfiles[fileselection]; 
 		int pos = getActualPosition(removed)-1;
+		String[] mInfo = tempfile.returnInfo(pos);
 		for (int i = 0; i<tempfile.getLength(); i++) {
 			String[] info = tempfile.returnInfo(i);
 			if (Integer.valueOf(info[10]) == pos + 1) {
 				tempfile.setLP(Integer.valueOf(info[10]), i);
 				tempfile.editEntry(i, 10, "0");
+				
 			}
-			else if (Integer.valueOf(info[8]) > pos+1) {
+			else if (Integer.valueOf(info[10]) > pos+1) {
 				tempfile.editEntry(i, 10, Integer.toString(Integer.valueOf(info[10])-1));
+			}
+			if(Integer.valueOf(mInfo[10])==pos) {
+				Vector3D pdV = Vector3D.mult(-Double.valueOf(mInfo[6])/Double.valueOf(info[6]), new Vector3D(
+						Double.valueOf(mInfo[3]), Double.valueOf(mInfo[4]), Double.valueOf(mInfo[5])));
+				tempfile.editEntry(i, 3, Double.toString(Double.valueOf(info[3])-pdV.x));
+				tempfile.editEntry(i, 4, Double.toString(Double.valueOf(info[4])-pdV.y));
+				tempfile.editEntry(i, 5, Double.toString(Double.valueOf(info[5])-pdV.z));
 			}
 			if(Integer.valueOf(info[10])<-1) {
 				tempfile.editEntry(i, 10, Integer.toString(-1));
@@ -453,8 +462,8 @@ public class EditPanel {
 				}
 			}
 			else if (command.equals("delete")) {
-				rawfiles[fileselection].removePerm(objselection);
 				handleRemove(objselection);
+				rawfiles[fileselection].removePerm(objselection);
 				setObjDisplay();
 				saved = false;
 			}
