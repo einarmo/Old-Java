@@ -98,7 +98,7 @@ public class ParamPanel {
 		Vector3D pANNORM = new Vector3D(Math.sin(LongAN), 0, Math.cos(LongAN));
 		Vector3D pC = new Vector3D(Math.cos(Double.valueOf(inc))/(Math.sqrt(1.0+
 				Math.tan(Double.valueOf(LongAN))*Math.tan(Double.valueOf(LongAN)))), 
-				Math.sin(Double.valueOf(inc)), Math.tan(Double.valueOf(LongAN))*
+				Math.sin(Double.valueOf(inc)), -Math.tan(Double.valueOf(LongAN))*
 				Math.cos(Double.valueOf(inc))/(Math.sqrt(1.0+
 				Math.tan(Double.valueOf(LongAN))*Math.tan(Double.valueOf(LongAN)))));
 		//double vTrue = arP/360.0*Math.PI*2+trueAN/360.0*Math.PI*2;
@@ -112,7 +112,7 @@ public class ParamPanel {
 		if(b3.isSelected()) {
 			sMa = Double.valueOf(infoList[1])*1000;
 		} else {
-			sMa = Double.valueOf(infoList[1])*1000/(1.496*Math.pow(10, 11));
+			sMa = Double.valueOf(infoList[1])*1000/(1.496*Math.pow(10, 8));
 		}
 		double smia = sMa*Math.sqrt(1.0-Double.valueOf(infoList[0])*Double.valueOf(infoList[0]));
 		Vector3D trueRelPos = Vector3D.add(Vector3D.mult(sMa*Math.cos(Double.valueOf(trueAN)), perNORM),
@@ -148,12 +148,6 @@ public class ParamPanel {
 				+ Integer.toString(parentNum+1) + " "
 				+ "1");
 		p.saved = false;
-		Vector3D pdV = Vector3D.mult(-mass/Double.valueOf(pInfo[6]), vel);
-		file.editEntry(parentNum, 3, Double.toString(pdV.x+Double.valueOf(pInfo[3])));
-		file.editEntry(parentNum, 4, Double.toString(pdV.y+Double.valueOf(pInfo[4])));
-		file.editEntry(parentNum, 5, Double.toString(pdV.z+Double.valueOf(pInfo[5])));
-		file.recalcChildren(parentNum, pdV);
-		file.children.get(parentNum).add(numEntry);
 		p.setObjDisplay();
 		numEntry++;
 	}
