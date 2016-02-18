@@ -101,7 +101,7 @@ public class ParamPanel {
 				Math.sin(Double.valueOf(inc)), Math.tan(Double.valueOf(LongAN))*
 				Math.cos(Double.valueOf(inc))/(Math.sqrt(1.0+
 				Math.tan(Double.valueOf(LongAN))*Math.tan(Double.valueOf(LongAN)))));
-		double vTrue = arP/360.0*Math.PI*2+trueAN/360.0*Math.PI*2;
+		//double vTrue = arP/360.0*Math.PI*2+trueAN/360.0*Math.PI*2;
 		Vector3D k = Vector3D.cross(pC, pANNORM);
 		Vector3D perNORM = Vector3D.add(Vector3D.add(Vector3D.mult(Math.cos(arP), pANNORM), 
 				Vector3D.mult(Math.sin(arP), Vector3D.cross(k, pANNORM))),

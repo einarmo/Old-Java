@@ -61,8 +61,9 @@ public class SpaceRun {
 			}
 			if(i%Space.update==0) {
 				drawObj(i);
+				perfChange();
 			}
-			perfChange();
+			
 			if(i%50000 == 0) {
 				calcMinDist();
 			}
@@ -72,7 +73,7 @@ public class SpaceRun {
 
 		
 
-		if(i%2000*Space.update == 0) {
+		if(i%(200*Space.update) == 0) {
 			inf.setInfoString(OB);
 		}
 		for(int j = 0; j < OB.length; j++) {
@@ -117,10 +118,10 @@ public class SpaceRun {
 	}
 	public void perfChange() { //Perform changes to constants based on keypresses
 		if(decSpeed) {
-			Space.calcmod -= Space.calcmod*0.00001/Space.update;
+			Space.calcmod -= Space.calcmod*0.01/Space.update;
 		}
 		if(incSpeed) {
-			Space.calcmod += Space.calcmod*0.00001/Space.update;
+			Space.calcmod += Space.calcmod*0.01/Space.update;
 		}
 		if(clear) {
 			changed = true;
@@ -211,42 +212,42 @@ public class SpaceRun {
 			}
 			if(zoom) {
 				changed = true;
-				zoomR -= 1.0/Space.update;
+				zoomR -= 5.0/Space.update;
 			}
 			if(zoomOut) {
 				changed = true;
-				zoomR += 1.0/Space.update;
+				zoomR += 5.0/Space.update;
 			}
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.001/Space.update;
+				angle.y+=0.01/Space.update;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.001/Space.update;
+				angle.y-=0.01/Space.update;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.001/Space.update;
+				angle.x+=0.01/Space.update;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.001/Space.update;
+				angle.x-=0.01/Space.update;
 			}
-			if(rRight) {
-				achanged = true;
-				changed = true;
-				angle.z+=0.001/Space.update;
-			}
-			if(rLeft) {
-				achanged = true;
-				changed = true;
-				angle.z-=0.001/Space.update;
-			}
+			//if(rRight) {
+				//achanged = true;
+				//changed = true;
+				//angle.z+=0.01/Space.update;
+			//}
+			//if(rLeft) {
+				//achanged = true;
+				//changed = true;
+				//angle.z-=0.01/Space.update;
+			//}
 			
 		}
 	}

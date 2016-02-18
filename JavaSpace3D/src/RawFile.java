@@ -171,6 +171,7 @@ public class RawFile {
 			lines[i] = tmpLines[i];
 			lastP[i] = tmpInt[i];
 		}
+		children.add(new ArrayList<Integer>());
 	}
 	public void setEntry(int entry, String s) {
 		lines[entry] = s;

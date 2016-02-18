@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.ArrayList;
 
 import javax.swing.border.*;
 
@@ -20,6 +21,8 @@ public class MainPanel {
 	int[][] drawn;
 	Color bgC = Color.black;
 	Graphics2D g;
+	ArrayList<Point> dr = new ArrayList<Point>(); //List of all drawn points
+	
 	MainPanel(int w, int h) {
 		this.h = h;
 		this.w = w;
@@ -60,24 +63,33 @@ public class MainPanel {
 	}
 	public void clear() {
 		g.setColor(bgC);
-		for(int i = 0; i<drawn.length; i++) {
-			for(int j = 0; j<drawn[i].length; j++) {
-				if(drawn[i][j]!=0) {
-					if(drawn[i][j]!=0) {
-						g.drawLine(i, j, i, j);
-						drawn[i][j] = 0;
-						SpaceRun.change = true;
-					}
-				}
-			}
+		//for(int i = 0; i<drawn.length; i++) {
+		//	for(int j = 0; j<drawn[i].length; j++) {
+		//		if(drawn[i][j]!=0) {
+		//			if(drawn[i][j]!=0) {
+		//				g.drawLine(i, j, i, j);
+		//				drawn[i][j] = 0;
+		//				SpaceRun.change = true;
+		//			}
+		//		}
+		//	}
+		//}
+		for(int i = 0; i<dr.size(); i++) {
+			int x = dr.get(i).x;
+			int y = dr.get(i).y;
+			drawn[x][y] = 0;
+			g.drawLine(x, y, x, y);
+			SpaceRun.change = true;
 		}
+		dr = new ArrayList<Point>();
 	}
 	public void plot(int x, int y, int r, Color c) {
 		g.setColor(c);
 		//System.out.println(x + " "+  y + " " + c);
-		if(drawn[x][y] != r) {
+		if(drawn[x][y] < r) {
 			SpaceRun.change = true;
 			g.drawLine(x, y, x, y);
+			dr.add(new Point(x,y));
 		}
 		drawn[x][y] = r;
 	}
