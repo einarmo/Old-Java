@@ -11,6 +11,7 @@ public class Object {
 	
 	
 	Object(int num, Vector3D P, Vector3D V, double mass, Color c, int par) {
+		System.out.println(par);
 		this.num = num;
 		this.P = P;
 		this.par = par;
@@ -42,8 +43,36 @@ public class Object {
 		P.add(V, Space.calcmod);
 		A = new Vector3D(0.0, 0.0, 0.0);
 	}
-	public void notfixed() {
-		fix = false;
+	public void checkForChildren(Object[] OB) {
+		for(int i = 0; i<OB.length; i++) {
+			if(OB[i].par == num) {
+				fix = false;
+			}
+		}
+	}
+	public void calcChildren(Object[] OB) {
+		double totalMass = 0;
+		totalMass+=mass;
+		Vector3D totalMomentum = new Vector3D(0, 0, 0);
+		for(int i = 0; i<OB.length; i++) {
+			if(OB[i].par-1 == num) {
+				if(OB[i].fix == false) {
+					OB[i].calcChildren(OB);
+				}
+				totalMass+=OB[i].mass;
+				totalMomentum.add(Vector3D.dist(V, OB[i].V), OB[i].mass);
+			}
+		}
+		Vector3D diffSpd = Vector3D.mult(1/totalMass, totalMomentum);
+		for(int i = 0; i<OB.length; i++) {
+			if(OB[i].par-1 == num) {
+				OB[i].V.add(diffSpd, 1);
+			}
+		}
+		V.add(diffSpd, 1);
+		fix = true;
+		System.out.println("CALC: " + num);
+		System.out.println(diffSpd.x + " " + diffSpd.y + " " + diffSpd.z);
 	}
 	public void modspd(double spdx, double spdy, double spdz) {
 		V.addVal(spdx, spdy, spdz);

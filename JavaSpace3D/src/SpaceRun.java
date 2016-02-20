@@ -30,6 +30,14 @@ public class SpaceRun {
 	SpaceRun(int ticks, Object[] OB) { //Initiate the main process
 		SpaceRun.OB = OB;
 		this.numticks = ticks;
+		for(int i = 0; i<OB.length; i++) {
+			OB[i].checkForChildren(OB);
+		}
+		for(int i = 0; i<OB.length; i++) {
+			if(!OB[i].fix) {
+				OB[i].calcChildren(OB);
+			}
+		}
 		
 		calc = new boolean[OB.length];
 		getMaxMass();
@@ -212,31 +220,31 @@ public class SpaceRun {
 			}
 			if(zoom) {
 				changed = true;
-				zoomR -= 5.0/Space.update;
+				zoomR -= 1.0/Space.update;
 			}
 			if(zoomOut) {
 				changed = true;
-				zoomR += 5.0/Space.update;
+				zoomR += 1.0/Space.update;
 			}
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.01/Space.update;
+				angle.y+=0.001/Space.update;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.01/Space.update;
+				angle.y-=0.001/Space.update;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.01/Space.update;
+				angle.x+=0.001/Space.update;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.01/Space.update;
+				angle.x-=0.001/Space.update;
 			}
 			//if(rRight) {
 				//achanged = true;

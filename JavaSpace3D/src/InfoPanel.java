@@ -52,9 +52,9 @@ public class InfoPanel {
 		String exp = ("<b>Object " + (num+1) + "</b><br><b>x:</b>" + Math.round(OB[num].P.x));
 		exp = (exp + "</b><br><b>y:</b>" + Math.round(OB[num].P.y));
 		exp = (exp + "</b><br><b>z:</b>" + Math.round(OB[num].P.z));
-		exp = (exp + "</b><br><b>speed x:</b>" + Math.rint(OB[num].V.x*1000)/1000);
-		exp = (exp + "</b><br><b>speed y:</b>" + Math.rint(OB[num].V.y*1000)/1000);
-		exp = (exp + "</b><br><b>speed z:</b>" + Math.rint(OB[num].V.z*1000)/1000);
+		exp = (exp + "</b><br><b>speed x:</b>" + Math.rint(OB[num].V.x*10000)/10000);
+		exp = (exp + "</b><br><b>speed y:</b>" + Math.rint(OB[num].V.y*10000)/10000);
+		exp = (exp + "</b><br><b>speed z:</b>" + Math.rint(OB[num].V.z*10000)/10000);
 		exp = (exp + "</b><br><b>mass:</b>" + OB[num].mass);
 		return exp;
 	}

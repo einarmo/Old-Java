@@ -1,6 +1,6 @@
-0.00001 double calcmod : this variable modifies all calculations. A lower number will make the program run slower, but will increase accuracy.
+0.01 double calcmod : this variable modifies all calculations. A lower number will make the program run slower, but will increase accuracy.
 true boolean calcorb : Calculate circular orbits.
 100 integer update : number of ticks between each graphical update. Should be increased if calcmod is lowered.
 1000000000 integer numticks : number of ticks to be calculated.
-0.667384 double G : the universal gravitational constant G in this program. 
+0.667384 double G : the universal gravitational constant G in this program, lower numbers makes the numbers in calculation more extreme and is uneccessary. 
 ./objects/ String objPath : the path to the object files.

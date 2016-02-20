@@ -176,14 +176,6 @@ public class RawFile {
 	public void setEntry(int entry, String s) {
 		lines[entry] = s;
 	}
-	public void recalcChildren(int entry, Vector3D dV) {
-		for(int i = 0; i<children.get(entry).size(); i++) {
-			String[] infoF = returnInfo(children.get(entry).get(i));
-			editEntry((int)children.get(entry).get(i), 3, Double.toString(Double.valueOf(infoF[3])+dV.x));
-			editEntry((int)children.get(entry).get(i), 4, Double.toString(Double.valueOf(infoF[4])+dV.y));
-			editEntry((int)children.get(entry).get(i), 5, Double.toString(Double.valueOf(infoF[5])+dV.z));
-		}
-	}
 	public int getLP(int index) {
 		return lastP[index];
 	}
