@@ -8,7 +8,7 @@ public class TimerThread implements Runnable {
 		// TODO Auto-generated method stub
 		while(true) {
 			try {
-			Thread.sleep(36);
+			Thread.sleep(17);
 			} catch (InterruptedException e) {
 			}
 			SpaceRun.doDraw = true;

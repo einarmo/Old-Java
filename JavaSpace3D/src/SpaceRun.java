@@ -94,19 +94,22 @@ public class SpaceRun {
 				m.plot(x, y, rad, OB[j].c);
 			}
 		}
+		updateCamera();
 		if(doDraw) {
 			m.flush();
 			change = false;
-			updateCamera();
+			
 			m.createGraphics();
 			if(achanged) {
 				updateConstants();
 
 			}
+			perfChange();
 			if(changed) {
 				m.clear();
 				changed = false;
 			}
+			doDraw = false;
 		}
 		
 	}
@@ -126,125 +129,125 @@ public class SpaceRun {
 	}
 	public void perfChange() { //Perform changes to constants based on keypresses
 		if(decSpeed) {
-			Space.calcmod -= Space.calcmod*0.01/Space.update;
+			Space.calcmod -= Space.calcmod*0.001;
 		}
 		if(incSpeed) {
-			Space.calcmod += Space.calcmod*0.01/Space.update;
+			Space.calcmod += Space.calcmod*0.001;
 		}
 		if(clear) {
 			changed = true;
 		}
 		if(!fMode) {
 			if(zoom) {
-				cPos.z+=1.0/Space.update;
+				cPos.z+=1.0;
 				changed = true;
 			}
 			if(zoomOut) {
-				cPos.z-=1.0/Space.update;
+				cPos.z-=1.0;
 				changed = true;
 			}
 			if(left) {
-				cPos.x+=1.0/Space.update;
+				cPos.x+=1.0;
 				changed = true;
 			}
 			if(right) {
-				cPos.x-=1.0/Space.update;
+				cPos.x-=1.0;
 				changed = true;
 			}
 			if(up) {
-				cPos.y+=1.0/Space.update;
+				cPos.y+=1.0;
 				changed = true;
 			}
 			if(down) {
-				cPos.y-=1.0/Space.update;
+				cPos.y-=1.0;
 				changed = true;
 			}
 
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.001/Space.update;
+				angle.y+=0.001;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.001/Space.update;
+				angle.y-=0.001;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.001/Space.update;
+				angle.x+=0.001;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.001/Space.update;
+				angle.x-=0.001;
 			}
 			if(rRight) {
 				achanged = true;
 				changed = true;
-				angle.z+=0.001/Space.update;
+				angle.z+=0.001;
 			}
 			if(rLeft) {
 				achanged = true;
 				changed = true;
-				angle.z+=0.001/Space.update;
+				angle.z+=0.001;
 			}
 		} else {
 			if (selItem == 0) {
 				if(in) {
-					focusPos.z+=1.0/Space.update;
+					focusPos.z+=1.0;
 					changed = true;
 				}
 				if(out) {
-					focusPos.z-=1.0/Space.update;
+					focusPos.z-=1.0;
 					changed = true;
 				}
 				if(left) {
-					focusPos.x+=1.0/Space.update;
+					focusPos.x+=1.0;
 					changed = true;
 				}
 				if(right) {
-					focusPos.x-=1.0/Space.update;
+					focusPos.x-=1.0;
 					changed = true;
 				}
 				if(up) {
-					focusPos.y+=1.0/Space.update;
+					focusPos.y+=1.0;
 					changed = true;
 				}
 				if(down) {
-					focusPos.y-=1.0/Space.update;
+					focusPos.y-=1.0;
 					changed = true;
 				}
 				
 			}
 			if(zoom) {
 				changed = true;
-				zoomR -= 1.0/Space.update;
+				zoomR -= 1.0;
 			}
 			if(zoomOut) {
 				changed = true;
-				zoomR += 1.0/Space.update;
+				zoomR += 1.0;
 			}
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.001/Space.update;
+				angle.y+=0.001;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.001/Space.update;
+				angle.y-=0.001;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.001/Space.update;
+				angle.x+=0.001;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.001/Space.update;
+				angle.x-=0.001;
 			}
 			//if(rRight) {
 				//achanged = true;
