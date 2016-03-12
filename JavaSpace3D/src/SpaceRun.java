@@ -1,6 +1,9 @@
 
 
 import java.awt.Toolkit;
+
+import javax.swing.SwingUtilities;
+
 import java.awt.Dimension;
 
 public class SpaceRun {
@@ -19,14 +22,19 @@ public class SpaceRun {
 	public static Vector3D focusPos = new Vector3D(0, 0, 0);
 	Vector3D uPos;
 	Vector3D relC = new Vector3D(0.0, 0.0, 1000);
+	public int pListVal = 0;
+	ObjPos[] pList = new ObjPos[100000];
 	public double zoomR = 1000;
 	private int numticks;
 	public static Object[] OB;
 	MainPanel m;
 	InfoPanel inf;
+	public static boolean geomR;
 	private double maxMass, maxDist;
 	Vector3D currentSin = new Vector3D(0, 0, 0); //Current sine value of the camera, to save processing power
 	Vector3D currentCos = new Vector3D(0, 0, 0); 
+	int countC = 0;
+	long time=System.currentTimeMillis();
 	SpaceRun(int ticks, Object[] OB) { //Initiate the main process
 		SpaceRun.OB = OB;
 		this.numticks = ticks;
@@ -48,11 +56,12 @@ public class SpaceRun {
 		
 		this.m = new MainPanel(wi, he);
 		m.createF();
+		m.createGraphics();
 		m.clear();
 		//m.createF();
 		//setIdealZoom();
 		this.inf = new InfoPanel(350,he,wi+5,0, OB);
-		uPos = new Vector3D(-(wi+200)/2, -(he+200)/2, 500);
+		uPos = new Vector3D(-(wi)/2, -(he)/2, 500);
 		updateConstants();
 		TimerThread timer = new TimerThread();
 		new Thread(timer).start();
@@ -69,7 +78,6 @@ public class SpaceRun {
 			}
 			if(i%Space.update==0) {
 				drawObj(i);
-				perfChange();
 			}
 			
 			if(i%50000 == 0) {
@@ -84,34 +92,71 @@ public class SpaceRun {
 		if(i%(200*Space.update) == 0) {
 			inf.setInfoString(OB);
 		}
+		
+		int rad = 1;
+		updateCamera();
+		//countC++;
 		for(int j = 0; j < OB.length; j++) {
-			int rad = 1;
 			Vector3D d = Vector3D.dist(OB[j].P, cPos);
 			Vector3D conv = conv(OB[j].P, d);
 			int x = convX(conv);
 			int y = convY(conv);
-			if(conv.z<0&&x>0&&y>0&&x<m.drawW&&y<m.drawH) {
+			if(conv.z<0 && x>0 && y>0 && x<m.drawW && y<m.drawH) {
 				m.plot(x, y, rad, OB[j].c);
 			}
 		}
-		updateCamera();
+		
+		//System.out.println("Timing: " + (System.currentTimeMillis()-time));
+		
 		if(doDraw) {
-			m.flush();
-			change = false;
-			
-			m.createGraphics();
-			if(achanged) {
-				updateConstants();
-
+			//System.out.println("Timing: " + (System.currentTimeMillis()-time));
+			if(geomR) {
+				writeObjects(OB);
 			}
-			perfChange();
+			//System.out.println(" ");
+			//System.out.println("Begin Flush " + Thread.currentThread().getName());
+			m.flushObj();
+			//m.createGraphics();
+			//try{
+			//Thread.sleep(1);
+			//} catch(InterruptedException e) {}
 			if(changed) {
 				m.clear();
 				changed = false;
 			}
+			change = false;
+			perfChange();
+			if(geomR&&(achanged||selItem!=0)) {
+				int k = pList.length+pListVal%pList.length;
+				if(pListVal<pList.length) {
+					k = pList.length;
+				}
+				for(int j = pList.length - pListVal%pList.length; j<k; j++) {
+					Vector3D P = new Vector3D(pList[j%pList.length].x, pList[j%pList.length].y, pList[j%pList.length].z);
+					Vector3D d = Vector3D.dist(P, cPos);
+					Vector3D conv = conv(P, d);
+					int x = convX(conv);
+					int y = convY(conv);
+					if(conv.z<0&&x>0&&y>0&&x<m.drawW&&y<m.drawH) {
+						m.plot(x, y, rad, pList[j].c);
+					}
+				}
+			}
+			if(achanged) {
+				updateConstants();
+				achanged = false;
+			}
 			doDraw = false;
+			//time = System.currentTimeMillis();
+			//System.out.println("Begin Plot " + Thread.currentThread().getName());
 		}
 		
+	}
+	public void writeObjects(Object[] OB) {
+		for(int i = OB.length-1; i>=0; i--) {
+			pList[pList.length - 1 - pListVal%pList.length] = new ObjPos(OB[i].P.x, OB[i].P.y, OB[i].P.z, OB[i].c);
+			pListVal++;
+		}
 	}
 	public void updateCamera() { //Update camera position to match the current angle of the camera and the focus
 		double size = Math.sqrt(1+Math.sin(angle.x)*Math.sin(angle.x));
@@ -129,125 +174,125 @@ public class SpaceRun {
 	}
 	public void perfChange() { //Perform changes to constants based on keypresses
 		if(decSpeed) {
-			Space.calcmod -= Space.calcmod*0.001;
+			Space.calcmod -= Space.calcmod*0.01;
 		}
 		if(incSpeed) {
-			Space.calcmod += Space.calcmod*0.001;
+			Space.calcmod += Space.calcmod*0.01;
 		}
 		if(clear) {
 			changed = true;
 		}
 		if(!fMode) {
 			if(zoom) {
-				cPos.z+=1.0;
+				cPos.z+=10.0;
 				changed = true;
 			}
 			if(zoomOut) {
-				cPos.z-=1.0;
+				cPos.z-=10.0;
 				changed = true;
 			}
 			if(left) {
-				cPos.x+=1.0;
+				cPos.x+=10.0;
 				changed = true;
 			}
 			if(right) {
-				cPos.x-=1.0;
+				cPos.x-=10.0;
 				changed = true;
 			}
 			if(up) {
-				cPos.y+=1.0;
+				cPos.y+=10.0;
 				changed = true;
 			}
 			if(down) {
-				cPos.y-=1.0;
+				cPos.y-=10.0;
 				changed = true;
 			}
 
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.001;
+				angle.y+=0.01;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.001;
+				angle.y-=0.01;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.001;
+				angle.x+=0.01;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.001;
+				angle.x-=0.01;
 			}
 			if(rRight) {
 				achanged = true;
 				changed = true;
-				angle.z+=0.001;
+				angle.z+=0.01;
 			}
 			if(rLeft) {
 				achanged = true;
 				changed = true;
-				angle.z+=0.001;
+				angle.z+=0.01;
 			}
 		} else {
 			if (selItem == 0) {
 				if(in) {
-					focusPos.z+=1.0;
+					focusPos.z+=10.0;
 					changed = true;
 				}
 				if(out) {
-					focusPos.z-=1.0;
+					focusPos.z-=10.0;
 					changed = true;
 				}
 				if(left) {
-					focusPos.x+=1.0;
+					focusPos.x+=10.0;
 					changed = true;
 				}
 				if(right) {
-					focusPos.x-=1.0;
+					focusPos.x-=10.0;
 					changed = true;
 				}
 				if(up) {
-					focusPos.y+=1.0;
+					focusPos.y+=10.0;
 					changed = true;
 				}
 				if(down) {
-					focusPos.y-=1.0;
+					focusPos.y-=10.0;
 					changed = true;
 				}
 				
 			}
 			if(zoom) {
 				changed = true;
-				zoomR -= 1.0;
+				zoomR -= 0.01*zoomR;
 			}
 			if(zoomOut) {
 				changed = true;
-				zoomR += 1.0;
+				zoomR += 0.01*zoomR;
 			}
 			if(yRight) {
 				achanged = true;
 				changed = true;
-				angle.y+=0.001;
+				angle.y+=0.01;
 			}
 			if(yLeft) {
 				achanged = true;
 				changed = true;
-				angle.y-=0.001;
+				angle.y-=0.01;
 			}
 			if(pUp) {
 				achanged = true;
 				changed = true;
-				angle.x+=0.001;
+				angle.x+=0.01;
 			}
 			if(pDown) {
 				achanged = true;
 				changed = true;
-				angle.x-=0.001;
+				angle.x-=0.01;
 			}
 			//if(rRight) {
 				//achanged = true;

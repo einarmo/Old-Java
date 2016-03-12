@@ -10,17 +10,22 @@ import javax.swing.border.*;
 
 import java.awt.event.*;
 
-public class MainPanel {
+public class MainPanel extends JPanel{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private BufferedImage CImage;
-	private JLabel imgLabel;
-	private JPanel mainP;
+	boolean flushing;
 	private JFrame f;
 	private int h, w;
 	public int drawH, drawW;
 	int[][] drawn;
 	Color bgC = Color.black;
+	int cGr;
 	Graphics2D g;
+	
 	ArrayList<Point> dr = new ArrayList<Point>(); //List of all drawn points
 	
 	MainPanel(int w, int h) {
@@ -29,40 +34,34 @@ public class MainPanel {
 	}
 	public void addListener() {
 		keylist listener = new keylist();
-		mainP.addKeyListener(listener);
-		mainP.setFocusable(true);
+		this.addKeyListener(listener);
+		this.setFocusable(true);
 	}
 	public void createF() {
-		CImage = new BufferedImage(w+200, h+200, BufferedImage.TYPE_INT_RGB);
+		CImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		drawH = CImage.getHeight();
 		drawW = CImage.getWidth();
-		mainP = new JPanel();
-		mainP.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.CENTER;
-		c.weighty = 1.0;
-		c.weightx = 1.0;
-		imgLabel = new JLabel(new ImageIcon(CImage));
-		imgLabel.setBorder(new EmptyBorder(0,0,0,0));
-		mainP.add(imgLabel, c);
-		mainP.setLocation(0, 0);
+		
+		this.setLocation(0, 0);
+		this.setBackground(Color.red);
 		
 		drawn = new int[CImage.getWidth()][CImage.getHeight()];
 		
 		addListener();
 		createGraphics();
 		clear();
-		flush();
+		flushObj();
+		
 		f = new JFrame("Space");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setContentPane(mainP);
+		f.setContentPane(this);
 		f.pack();
 		f.setSize(new Dimension(w+6,h+28));
 		f.setVisible(true);
 	}
 	public void clear() {
-		g.setColor(bgC);
+		//System.out.println("clear");
+		
 		//for(int i = 0; i<drawn.length; i++) {
 		//	for(int j = 0; j<drawn[i].length; j++) {
 		//		if(drawn[i][j]!=0) {
@@ -74,14 +73,25 @@ public class MainPanel {
 		//		}
 		//	}
 		//}
-		for(int i = 0; i<dr.size(); i++) {
-			int x = dr.get(i).x;
-			int y = dr.get(i).y;
-			drawn[x][y] = 0;
-			g.drawLine(x, y, x, y);
-			SpaceRun.change = true;
+		synchronized(this) {
+			if(flushing) {
+				try{
+					this.wait();
+				} catch(InterruptedException e) {}
+			}
 		}
-		dr = new ArrayList<Point>();
+			g.setColor(bgC);
+			for(int i = 0; i<dr.size(); i++) {
+				int x = dr.get(i).x;
+				int y = dr.get(i).y;
+				drawn[x][y] = 0;
+				g.drawLine(x, y, x, y);
+				SpaceRun.change = true;
+			}
+			dr = new ArrayList<Point>();
+			//System.out.println("clear "+Thread.currentThread().getName());
+	
+
 	}
 	public void plot(int x, int y, int r, Color c) {
 		g.setColor(c);
@@ -99,10 +109,31 @@ public class MainPanel {
 	}
 	public void createGraphics() {
 		g = this.CImage.createGraphics();
+		g.setColor(Color.blue);
+		g.drawOval(300, 300, 10, 10);
 	}
-	public void flush() {
-		imgLabel.repaint();
-		g.dispose();
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(CImage, 0, 0, null);
+		synchronized(this) {
+			flushing = false;
+			this.notify();
+		}
+	}
+	public void flushObj() {
+		
+//		this.paintComponent(g);
+		synchronized(this) {
+			flushing = true;
+		}
+		repaint();
+		
+		//g.setColor(Color.red);
+		//g.drawOval(400, 400, 10, 10);
+		//g.dispose();
+		
+		
+		//System.out.println("flush");
 	}
 	public Dimension getSize() {
 		return new Dimension(CImage.getWidth(), CImage.getHeight());

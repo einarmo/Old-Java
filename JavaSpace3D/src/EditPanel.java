@@ -101,7 +101,7 @@ public class EditPanel {
 		b6.setToolTipText("Create new object from orbital parameters, opens a seperate menu");
 		b6.setActionCommand("nParam");
 		b6.addActionListener(new buttonControl());
-		calcB = new JRadioButton("Draw size");
+		calcB = new JRadioButton("Full rotation");
 
 		//Creates the text fields and associated labels and adds them to the GUI.
 		String[] labelstrings = {"x-pos", "y-pos", "z-pos", "x-vel", "y-vel", "z-vel", "mass", "red", "green", "blue", "parent"};
@@ -185,11 +185,10 @@ public class EditPanel {
 		synchronized(frame) {
 			try {
 				frame.wait();
-
 			} catch (InterruptedException e) {
 			}
 		}
-		SpaceRun.sizeC = calcB.isSelected();
+		SpaceRun.geomR = calcB.isSelected();
 		frame.dispose();
 		s.launch(objects);
 	}
